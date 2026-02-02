@@ -3,460 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drive Link Hub | Dashboard</title>
+    <title>Drive Link Hub | Dashboard Dinamis</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338CA;
-            --bg: #F8FAFC;
-            --sidebar-bg: #FFFFFF;
-            --text-main: #1E293B;
-            --text-sub: #64748B;
-            --border: #E2E8F0;
-            --card-bg: #FFFFFF;
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 80px;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #eef2ff;
+            --accent: #f43f5e;
+            --bg: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #f1f5f9;
+            --card-bg: #ffffff;
+            --sidebar-width: 280px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            display: flex; 
             min-height: 100vh;
-            overflow-x: hidden;
-            transition: all 0.3s ease;
+            letter-spacing: -0.01em;
         }
 
-        /* Sidebar Styles */
-        aside {
-            width: var(--sidebar-width);
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            display: flex;
+        /* Sidebar Design */
+        aside { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border); 
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
             flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            padding: 24px 16px;
+            z-index: 50;
         }
 
-        body.sidebar-collapsed aside {
-            width: var(--sidebar-collapsed-width);
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            font-weight: 700;
-            font-size: 20px;
-            color: var(--primary);
+        .sidebar-header { 
+            padding: 0 12px 32px; 
+            font-weight: 800; 
+            font-size: 22px; 
+            color: var(--primary); 
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            min-height: 80px;
-            box-sizing: border-box;
-        }
-
-        .sidebar-header span {
-            white-space: nowrap;
-            transition: opacity 0.2s;
-        }
-
-        body.sidebar-collapsed .sidebar-header span:not(.toggle-icon) {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .toggle-btn {
-            background: #F1F5F9;
-            border: none;
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-sub);
-            transition: all 0.2s;
-        }
-
-        .toggle-btn:hover {
-            background: var(--border);
-            color: var(--primary);
-        }
-
-        .menu-list {
-            list-style: none;
-            padding: 0 12px;
-            margin: 0;
-            flex: 1;
-        }
-
-        .menu-item {
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-sub);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            white-space: nowrap;
-            position: relative;
-        }
-
-        .menu-item i {
-            font-size: 20px;
-            min-width: 24px;
-            text-align: center;
-        }
-
-        .menu-item:hover {
-            background-color: #F1F5F9;
-            color: var(--primary);
-        }
-
-        .menu-item.active {
-            background-color: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-        }
-
-        body.sidebar-collapsed .menu-item span {
-            opacity: 0;
-        }
-
-        /* Main Content Area */
-        main {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 40px;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.sidebar-collapsed main {
-            margin-left: var(--sidebar-collapsed-width);
-        }
-
-        header {
-            margin-bottom: 32px;
-            display: flex;
-            flex-direction: column;
             gap: 12px;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        .menu-list { list-style: none; flex: 1; }
+        .menu-item { 
+            padding: 14px 16px; 
+            margin-bottom: 8px; 
+            border-radius: var(--radius-md); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            font-weight: 600; 
+            color: var(--text-sub); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .refresh-btn {
-            padding: 8px 16px;
+        .menu-item:hover { 
+            background: var(--primary-light); 
+            color: var(--primary); 
+            transform: translateX(4px);
+        }
+
+        .menu-item.active { 
+            background: var(--primary); 
+            color: white; 
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Content Area */
+        main { 
+            flex: 1; 
+            margin-left: var(--sidebar-width); 
+            padding: 48px 60px;
+            max-width: 1400px;
+        }
+
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            margin-bottom: 40px; 
+        }
+
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .subtitle { color: var(--text-sub); font-size: 16px; }
+
+        .actions { display: flex; gap: 12px; }
+        
+        .btn { 
+            padding: 12px 20px; 
+            border-radius: var(--radius-md); 
+            font-weight: 700; 
+            cursor: pointer; 
+            border: 1px solid var(--border); 
+            transition: all 0.2s; 
+            font-size: 14px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
             background: white;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .refresh-btn:hover {
-            background: #F1F5F9;
-        }
-
-        .refresh-btn.loading {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .mobile-header {
-            display: none;
-            padding: 16px;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 90;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 { font-size: 28px; font-weight: 700; margin: 0; }
-        p.subtitle { color: var(--text-sub); margin: 0; }
-
-        .link-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 16px;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .link-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 24px;
-            border-radius: 16px;
-            text-decoration: none;
             color: var(--text-main);
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.2s;
+        }
+
+        .btn:hover { background: #f8fafc; transform: translateY(-1px); box-shadow: var(--shadow); }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4); }
+
+        /* Grid & Cards */
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+        .link-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            padding: 28px; 
+            border-radius: var(--radius-lg); 
+            text-decoration: none; 
+            color: inherit; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        .link-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.1);
+        .link-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary); opacity: 0; transition: 0.3s;
         }
 
-        .icon-circle {
-            width: 48px; height: 48px;
-            background-color: #EEF2FF;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary); font-size: 24px;
+        .link-card:hover { transform: translateY(-8px); border-color: var(--primary-light); box-shadow: var(--shadow-hover); }
+        .link-card:hover::before { opacity: 1; }
+
+        .icon-circle { 
+            width: 56px; height: 56px; background: var(--primary-light); border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; margin-bottom: 20px; 
+            font-size: 26px; color: var(--primary); transition: 0.3s;
         }
 
-        .loading-overlay { text-align: center; padding: 50px; color: var(--text-sub); }
+        .link-card:hover .icon-circle { background: var(--primary); color: white; transform: scale(1.1) rotate(5deg); }
 
-        @media (max-width: 768px) {
-            aside {
-                transform: translateX(-100%);
-                width: var(--sidebar-width) !important;
-            }
-            body.sidebar-open aside { transform: translateX(0); }
-            main { margin-left: 0 !important; padding: 20px; }
-            .mobile-header { display: flex; }
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 95;
-            }
-            body.sidebar-open .sidebar-overlay { display: block; }
+        .card-name { font-weight: 700; font-size: 18px; margin-bottom: 6px; color: var(--text-main); }
+        .card-cat { font-size: 12px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+        .status-badge { 
+            font-size: 12px; color: var(--primary); background: var(--primary-light); 
+            padding: 6px 14px; border-radius: 100px; margin-top: 12px; 
+            display: inline-flex; align-items: center; gap: 6px; font-weight: 600;
+        }
+        
+        .pulse { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* Modal */
+        .modal { 
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; 
+        }
+
+        .modal-content { 
+            background: white; padding: 40px; border-radius: 24px; width: 100%; max-width: 500px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        textarea { 
+            width: 100%; height: 180px; margin: 20px 0; padding: 16px; border: 2px solid var(--border); 
+            border-radius: var(--radius-md); font-family: inherit; font-size: 14px; resize: none;
+        }
+
+        @media (max-width: 1024px) {
+            aside { width: 80px; padding: 24px 12px; }
+            .sidebar-header span, .menu-item span:last-child { display: none; }
+            main { margin-left: 80px; padding: 32px; }
+        }
+
+        @media (max-width: 640px) {
+            body { flex-direction: column; }
+            aside { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+            .menu-list { display: flex; gap: 8px; overflow-x: auto; }
+            .menu-item { margin-bottom: 0; flex-shrink: 0; padding: 10px; }
+            main { margin-left: 0; padding: 24px; }
+            header { flex-direction: column; align-items: stretch; gap: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <div class="mobile-header">
-        <span style="font-weight: 700; color: var(--primary);">📂 DriveHub</span>
-        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-    </div>
-
-    <aside id="sidebar">
+    <aside>
         <div class="sidebar-header">
-            <span>📂 DriveHub</span>
-            <button class="toggle-btn" onclick="toggleSidebar()">
-                <span class="toggle-icon">❮</span>
-            </button>
+            <div style="background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">D</div>
+            <span>DriveHub</span>
         </div>
-        <ul class="menu-list">
-            <li class="menu-item active" id="menu-sekolah" onclick="switchMenu('sekolah', this)">
-                <i>🏫</i>
-                <span>Sekolah</span>
-            </li>
-            <li class="menu-item" id="menu-wartam" onclick="switchMenu('wartam', this)">
-                <i>📰</i>
-                <span>Wartam Sch</span>
-            </li>
-        </ul>
+        <ul id="sidebarMenu" class="menu-list"></ul>
     </aside>
 
     <main>
         <header>
-            <div class="header-top">
-                <div>
-                    <h1 id="pageTitle">Daftar Link</h1>
-                    <p class="subtitle" id="pageSubtitle">Sinkronisasi data Google Sheets...</p>
+            <div>
+                <h1 id="pageTitle">Memuat...</h1>
+                <p id="pageSubtitle" class="subtitle">Kelola dan akses dokumen Drive Anda</p>
+                <div id="lastUpdate" class="status-badge">
+                    <span class="pulse"></span>
+                    <span id="updateText">Menghubungkan...</span>
                 </div>
-                <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
-                    <span id="refreshIcon">🔄</span> Segarkan
-                </button>
+            </div>
+            <div class="actions">
+                <button class="btn" onclick="fetchData()"><span>🔄</span> Segarkan</button>
+                <button class="btn btn-primary" onclick="openModal()"><span>⚡</span> Update Drive</button>
             </div>
         </header>
 
-        <div id="loader" class="loading-overlay">
-            <p>Sedang mengambil data terbaru...</p>
-        </div>
-        
         <div id="content" class="link-grid"></div>
     </main>
 
+    <!-- Modal Input Links -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Update Drive</h2>
+            <p style="font-size: 14px; color: var(--text-sub); line-height: 1.5;">Masukkan link folder Google Drive untuk sinkronisasi ke tab aktif.</p>
+            <textarea id="folderLinksInput" placeholder="Tempel link folder di sini (satu per baris)..."></textarea>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn" style="border:none; background:#f1f5f9;" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="btnProses" onclick="prosesUpdateDrive()">Proses Sekarang</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // URL CSV publik asli
-        const baseCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/pub?output=csv";
-        let allData = [];
-        let currentActiveMenu = 'sekolah';
+        /**
+         * PENGATURAN CUSTOM TAB DISINI
+         */
+        const APP_CONFIG = {
+            tabs: [
+                { key: 'sekolah', label: 'Sekolah', icon: '🏫', gid: '315008582' }, 
+                { key: 'wartam', label: 'Wartam', icon: '📰', gid: '854912260' },
+                { key: 'inventaris', label: 'Inventaris', icon: '📦', gid: 'NOMOR_GID_TAB_INVENTARIS' } 
+            ],
+            backendUrl: "https://script.google.com/macros/s/AKfycbwOV6-mt8Mq5f77uHK2E7cKWizPdPDwo-re7RpkWOae07VGY_mkqSObgVqou_gs50ya/exec",
+            csvBaseUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/pub?output=csv"
+        };
 
-        function toggleSidebar() {
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-                document.body.classList.toggle('sidebar-open');
-            } else {
-                document.body.classList.toggle('sidebar-collapsed');
-                const btn = document.querySelector('.toggle-icon');
-                btn.innerText = document.body.classList.contains('sidebar-collapsed') ? '❯' : '❮';
-            }
-        }
+        let currentTabKey = APP_CONFIG.tabs[0].key;
 
-        async function fetchData() {
-            const refreshBtn = document.getElementById('refreshBtn');
-            const refreshIcon = document.getElementById('refreshIcon');
+        // Render Sidebar Menu
+        function renderSidebar() {
+            const menuContainer = document.getElementById('sidebarMenu');
+            menuContainer.innerHTML = '';
             
-            try {
-                if(refreshBtn) refreshBtn.classList.add('loading');
-                if(refreshIcon) refreshIcon.style.animation = "spin 1s linear infinite";
-
-                // Gunakan cara fetch paling dasar tanpa header tambahan yang memicu CORS error
-                // Hanya tambahkan t=[timestamp] di akhir URL
-                const fetchUrl = `${baseCsvUrl}${baseCsvUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
-                
-                const response = await fetch(fetchUrl);
-
-                if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheets");
-                
-                let text = await response.text();
-                
-                // Pastikan teks tidak kosong
-                if (!text || text.length < 10) throw new Error("Data CSV kosong atau tidak valid");
-
-                text = text.trim().replace(/^\uFEFF/, '');
-                
-                allData = parseCSV(text);
-                document.getElementById('loader').style.display = 'none';
-                
-                const activeMenuElem = document.querySelector('.menu-item.active');
-                if(activeMenuElem) {
-                    switchMenu(currentActiveMenu, activeMenuElem);
-                }
-
-                console.log("Data diperbarui: " + new Date().toLocaleTimeString());
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                document.getElementById('loader').innerHTML = `
-                    <p style="color:red; margin-bottom: 10px;"><b>Gagal Sinkronisasi:</b> ${error.message}</p>
-                    <button onclick="manualRefresh()" style="padding: 5px 15px; cursor:pointer">Coba Lagi</button>
+            APP_CONFIG.tabs.forEach(tab => {
+                const li = document.createElement('li');
+                li.className = `menu-item ${tab.key === currentTabKey ? 'active' : ''}`;
+                li.onclick = () => switchMenu(tab.key, li);
+                li.innerHTML = `
+                    <span style="font-size: 20px;">${tab.icon}</span>
+                    <span>${tab.label}</span>
                 `;
-            } finally {
-                if(refreshBtn) refreshBtn.classList.remove('loading');
-                if(refreshIcon) refreshIcon.style.animation = "none";
-            }
+                menuContainer.appendChild(li);
+            });
         }
 
-        function manualRefresh() {
-            document.getElementById('loader').innerHTML = '<p>Sedang mengambil data terbaru...</p>';
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('content').innerHTML = '';
+        function switchMenu(key, el) {
+            if(currentTabKey === key) return;
+            currentTabKey = key;
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            renderHeader();
             fetchData();
         }
 
+        function renderHeader() {
+            const currentTab = APP_CONFIG.tabs.find(t => t.key === currentTabKey);
+            document.getElementById('pageTitle').innerText = `Folder ${currentTab.label}`;
+            document.getElementById('pageSubtitle').innerText = `Menampilkan koleksi data di tab ${currentTab.label}`;
+        }
+
+        async function fetchData() {
+            const content = document.getElementById('content');
+            content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Mengambil data...</p></div>`;
+            
+            const currentTab = APP_CONFIG.tabs.find(t => t.key === currentTabKey);
+            
+            try {
+                const url = `${APP_CONFIG.csvBaseUrl}&gid=${currentTab.gid}&t=${Date.now()}`;
+                const res = await fetch(url);
+                const text = await res.text();
+                const data = parseCSV(text);
+                displayCards(data);
+                document.getElementById('updateText').innerText = "Terakhir: " + new Date().toLocaleTimeString('id-ID');
+            } catch (e) {
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);"><p>Gagal memuat. Pastikan GID benar.</p></div>`;
+            }
+        }
+
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/);
-            const result = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-                const columns = lines[i].split(regex).map(val => val.trim().replace(/^"|"$/g, '').trim());
-                
-                if(columns.length >= 4) {
-                    result.push({
-                        asal: columns[0].toLowerCase(),
-                        tipe: columns[1].toLowerCase(),
-                        nama: columns[2],
-                        url: columns[3]
-                    });
-                }
-            }
-            return result;
+            const lines = text.trim().split(/\r?\n/);
+            if (lines.length < 2) return [];
+            return lines.slice(1).map(line => {
+                const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+                return { cat: parts[0], type: parts[1], name: parts[2], url: parts[3] };
+            }).filter(i => i.url);
         }
 
-        function switchMenu(type, element) {
-            currentActiveMenu = type;
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-
-            if (window.innerWidth <= 768) {
-                document.body.classList.remove('sidebar-open');
-            }
-
-            const contentDiv = document.getElementById('content');
-            const title = document.getElementById('pageTitle');
-            const subtitle = document.getElementById('pageSubtitle');
-            contentDiv.innerHTML = ""; 
-
-            if (type === 'sekolah') {
-                title.innerText = "Folder Sekolah";
-                subtitle.innerText = "Menampilkan kategori folder utama.";
-                renderLinks('drive'); 
-            } else {
-                title.innerText = "Wartam Sch";
-                subtitle.innerText = "Mencari 'Wartam' di Nama Folder";
-                renderLinksByKeyword('wartam');
-            }
-        }
-
-        function renderLinks(filterKey) {
-            const filtered = allData.filter(item => item.asal.includes(filterKey));
-            displayData(filtered);
-        }
-
-        function renderLinksByKeyword(keyword) {
-            const filtered = allData.filter(item => 
-                item.nama.toLowerCase().includes(keyword.toLowerCase())
-            );
-            displayData(filtered);
-        }
-
-        function displayData(data) {
-            const contentDiv = document.getElementById('content');
-            if (data.length === 0) {
-                contentDiv.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px;">Data tidak ditemukan.</p>`;
+        function displayCards(items) {
+            const content = document.getElementById('content');
+            content.innerHTML = "";
+            if(!items.length) {
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Tab ini masih kosong.</p></div>`;
                 return;
             }
-
-            data.forEach(item => {
+            items.forEach((item, index) => {
                 const card = document.createElement('a');
                 card.className = 'link-card';
                 card.href = item.url;
                 card.target = "_blank";
-                const icon = item.tipe.includes('file') ? '📄' : '📁';
-                card.innerHTML = `<div class="icon-circle">${icon}</div><span title="${item.nama}">${item.nama}</span>`;
-                contentDiv.appendChild(card);
+                const isFolder = (item.type || "").toLowerCase() === 'folder';
+                card.innerHTML = `<div class="icon-circle">${isFolder ? '📂' : '📄'}</div><div class="card-info"><div class="card-name">${item.name}</div><div class="card-cat">${item.cat || 'Drive'}</div></div>`;
+                content.appendChild(card);
+                
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                }, index * 50);
             });
         }
 
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = `
-            @keyframes spin { 100% { transform: rotate(360deg); } }
-        `;
-        document.head.appendChild(styleSheet);
+        function openModal() { document.getElementById('updateModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('updateModal').style.display = 'none'; }
 
-        window.onload = fetchData;
+        async function prosesUpdateDrive() {
+            const input = document.getElementById('folderLinksInput').value;
+            const btn = document.getElementById('btnProses');
+            if(!input) return alert("Masukkan link folder!");
+            
+            btn.disabled = true;
+            btn.innerText = "Memproses...";
+            
+            try {
+                const response = await fetch(APP_CONFIG.backendUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ category: currentTabKey, folderLinks: input })
+                });
+                const result = await response.json();
+                if(result.success) {
+                    alert(`Berhasil diupdate ke tab ${result.data.sheetUpdated}`);
+                    closeModal();
+                    fetchData();
+                } else { throw new Error(result.error); }
+            } catch (e) { alert("Error: " + e.message); } finally {
+                btn.disabled = false;
+                btn.innerText = "Proses Sekarang";
+            }
+        }
+
+        window.onclick = (e) => { if (e.target.id == 'updateModal') closeModal(); }
+        window.onload = () => { renderSidebar(); renderHeader(); fetchData(); };
     </script>
 </body>
 </html>
