@@ -84,6 +84,36 @@
             box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
         }
 
+        /* Sidebar Footer / Sheet Link */
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .btn-sheet {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            background: #ecfdf5;
+            color: #059669;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.2s;
+            border: 1px solid #d1fae5;
+        }
+
+        .btn-sheet:hover {
+            background: #d1fae5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+
         /* Content Area */
         main { 
             flex: 1; 
@@ -190,7 +220,7 @@
 
         @media (max-width: 1024px) {
             aside { width: 80px; padding: 24px 12px; }
-            .sidebar-header span, .menu-item span:last-child { display: none; }
+            .sidebar-header span, .menu-item span:last-child, .btn-sheet span { display: none; }
             main { margin-left: 80px; padding: 32px; }
         }
 
@@ -211,7 +241,16 @@
             <div style="background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">D</div>
             <span>DriveHub</span>
         </div>
+        
         <ul id="sidebarMenu" class="menu-list"></ul>
+
+        <div class="sidebar-footer">
+            <!-- Link menuju file Google Sheet utama Anda -->
+            <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1bCwRTDej3tLpJU_wKw58aX-BDa7hZGBANlyujwmGqfU/edit?usp=sharing" target="_blank" class="btn-sheet">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Buka Spreadsheet</span>
+            </a>
+        </div>
     </aside>
 
     <main>
@@ -248,7 +287,7 @@
 
     <script>
         /**
-         * PENGATURAN CUSTOM TAB DISINI
+         * PENGATURAN TATA LETAK DATA (Kembali ke konfigurasi awal yang bekerja)
          */
         const APP_CONFIG = {
             tabs: [
@@ -301,6 +340,7 @@
             const currentTab = APP_CONFIG.tabs.find(t => t.key === currentTabKey);
             
             try {
+                // Menggunakan link CSV Publik yang sudah terbukti bekerja
                 const url = `${APP_CONFIG.csvBaseUrl}&gid=${currentTab.gid}&t=${Date.now()}`;
                 const res = await fetch(url);
                 const text = await res.text();
@@ -308,7 +348,7 @@
                 displayCards(data);
                 document.getElementById('updateText').innerText = "Terakhir: " + new Date().toLocaleTimeString('id-ID');
             } catch (e) {
-                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);"><p>Gagal memuat. Pastikan GID benar.</p></div>`;
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);"><p>Gagal memuat. Pastikan GID dan Publikasi Web di Spreadsheet benar.</p></div>`;
             }
         }
 
