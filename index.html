@@ -111,12 +111,6 @@
             border: 1px solid #d1fae5;
         }
 
-        .btn-sheet:hover {
-            background: #d1fae5;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-        }
-
         /* Content Area */
         main { 
             flex: 1; 
@@ -194,33 +188,15 @@
             justify-content: center; 
             font-size: 24px; 
             flex-shrink: 0;
-            transition: 0.3s;
         }
 
         .card-folder .icon-container { background: var(--folder-bg); color: var(--folder-color); }
         .card-file .icon-container { background: var(--file-bg); color: var(--file-color); }
 
         .card-content { flex: 1; min-width: 0; }
-        .card-name { 
-            font-weight: 700; 
-            font-size: 15px; 
-            color: var(--text-main); 
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .card-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .card-meta { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-size: 11px; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-        }
-
-        .tag-type { padding: 2px 8px; border-radius: 4px; }
+        .tag-type { padding: 2px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase; font-weight: 800; }
         .card-folder .tag-type { background: var(--folder-bg); color: var(--folder-color); }
         .card-file .tag-type { background: var(--file-bg); color: var(--file-color); }
 
@@ -245,22 +221,12 @@
 
         textarea { 
             width: 100%; height: 180px; margin: 20px 0; padding: 16px; border: 2px solid var(--border); 
-            border-radius: var(--radius-md); font-family: inherit; font-size: 14px; resize: none;
+            border-radius: var(--radius-md); font-family: inherit; resize: none;
         }
 
-        @media (max-width: 1024px) {
-            aside { width: 80px; padding: 24px 12px; }
-            .sidebar-header span, .menu-item span:last-child, .btn-sheet span { display: none; }
-            main { margin-left: 80px; padding: 32px; }
-        }
-
-        @media (max-width: 640px) {
-            body { flex-direction: column; }
-            aside { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
-            .menu-list { display: flex; gap: 8px; overflow-x: auto; }
-            .menu-item { margin-bottom: 0; flex-shrink: 0; padding: 10px; }
-            main { margin-left: 0; padding: 24px; }
-            header { flex-direction: column; align-items: stretch; gap: 20px; }
+        .error-box {
+            background: #fef2f2; color: #b91c1c; padding: 16px; border-radius: var(--radius-md);
+            margin-bottom: 20px; font-size: 14px; border: 1px solid #fee2e2;
         }
     </style>
 </head>
@@ -277,8 +243,7 @@
         </ul>
 
         <div class="sidebar-footer">
-            <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/edit?usp=sharing" target="_blank" class="btn-sheet">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/edit" target="_blank" class="btn-sheet">
                 <span>Buka Spreadsheet</span>
             </a>
         </div>
@@ -288,89 +253,87 @@
         <header>
             <div>
                 <h1 id="pageTitle">DriveHub</h1>
-                <p id="pageSubtitle" class="subtitle">Pilih kategori di sidebar untuk melihat data.</p>
+                <p id="pageSubtitle" class="subtitle">Memuat data dari Google Sheets...</p>
                 <div id="lastUpdate" class="status-badge">
                     <span class="pulse"></span>
-                    <span id="updateText">Siap</span>
+                    <span id="updateText">Menghubungkan...</span>
                 </div>
             </div>
             <div class="actions">
-                <button class="btn" onclick="initApp()"><span>🔄</span> Sinkron Tab</button>
-                <button class="btn btn-primary" onclick="openModal()"><span>⚡</span> Update Drive</button>
+                <button class="btn" onclick="initApp()">🔄 Refresh Menu</button>
+                <button class="btn btn-primary" onclick="openModal()">⚡ Update Drive</button>
             </div>
         </header>
 
+        <div id="errorMessage" style="display:none" class="error-box"></div>
         <div id="content" class="link-grid"></div>
     </main>
 
     <div id="updateModal" class="modal">
         <div class="modal-content">
             <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Update Drive</h2>
-            <p style="font-size: 14px; color: var(--text-sub); line-height: 1.5;">Masukkan link folder Google Drive untuk sinkronisasi ke tab aktif.</p>
+            <p style="font-size: 14px; color: var(--text-sub);">Masukkan link folder Google Drive untuk tab ini.</p>
             <textarea id="folderLinksInput" placeholder="Tempel link folder di sini..."></textarea>
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                <button class="btn" style="border:none; background:#f1f5f9;" onclick="closeModal()">Batal</button>
+                <button class="btn" onclick="closeModal()">Batal</button>
                 <button class="btn btn-primary" id="btnProses" onclick="prosesUpdateDrive()">Proses Sekarang</button>
             </div>
         </div>
     </div>
 
     <script>
-        /**
-         * KONFIGURASI OTOMATIS
-         */
         const APP_CONFIG = {
-            // URL Web App hasil Deploy Google Apps Script
-            backendUrl: "https://script.google.com/macros/s/AKfycbwOV6-mt8Mq5f77uHK2E7cKWizPdPDwo-re7RpkWOae07VGY_mkqSObgVqou_gs50ya/exec",
-            // URL CSV dari Publish to Web (Tanpa parameter gid di belakang)
+            backendUrl: "https://script.google.com/macros/s/AKfycbydoSdc580QMDXQ-HaSnRMTMYIoqEa6HK99bN_64PeXQWcCrYSyqi-ak3ntAAvCH1kI/exec",
             csvBaseUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/pub?output=csv"
         };
 
         let dynamicTabs = [];
         let currentTab = null;
 
-        // 1. Ambil daftar Tab secara otomatis dari Backend
         async function initApp() {
+            const menuContainer = document.getElementById('sidebarMenu');
+            const statusText = document.getElementById('updateText');
+            const errBox = document.getElementById('errorMessage');
+            
+            errBox.style.display = 'none';
+            statusText.innerText = "Sinkronisasi Tab...";
+
             try {
-                document.getElementById('updateText').innerText = "Sinkronisasi Tab...";
-                // Gunakan mode no-cors jika perlu, tapi JSON biasanya butuh cors. 
-                // Pastikan GAS dideploy sebagai "Anyone"
-                const res = await fetch(`${APP_CONFIG.backendUrl}?action=getTabs`);
-                const result = await res.json();
+                // Gunakan fetch dengan penanganan error yang lebih ketat
+                const response = await fetch(`${APP_CONFIG.backendUrl}?action=getTabs`);
+                
+                if (!response.ok) throw new Error("Server backend tidak merespon (HTTP " + response.status + ")");
+                
+                const result = await response.json();
                 
                 if (result.success && result.tabs) {
                     dynamicTabs = result.tabs;
                     renderSidebar();
-                    // Auto select tab pertama jika belum ada yang terpilih
-                    if (dynamicTabs.length > 0 && !currentTab) {
-                        switchMenu(dynamicTabs[0]);
-                    } else if (currentTab) {
-                        // Tetap di tab yang sama jika sedang refresh
-                        const updatedTab = dynamicTabs.find(t => t.name === currentTab.name);
-                        if (updatedTab) switchMenu(updatedTab);
-                    }
+                    if (dynamicTabs.length > 0) switchMenu(dynamicTabs[0]);
+                    statusText.innerText = "Terhubung";
+                } else {
+                    throw new Error(result.error || "Gagal mendapatkan daftar tab.");
                 }
             } catch (e) {
-                console.error("Gagal sinkron tab:", e);
-                document.getElementById('sidebarMenu').innerHTML = `
-                    <li class="menu-item" style="color:red; font-size:12px;">
-                        Gagal Sinkron. Pastikan GAS sudah di-deploy ulang sebagai 'Anyone'.
-                    </li>`;
+                console.error(e);
+                statusText.innerText = "Gagal Sinkron";
+                menuContainer.innerHTML = `<li class="menu-item" style="color:red; font-size:12px;">Gagal memuat menu.</li>`;
+                errBox.style.display = 'block';
+                errBox.innerHTML = `<strong>Koneksi Gagal:</strong> ${e.message}<br><br>
+                1. Pastikan GAS sudah di-Deploy sebagai <strong>Web App</strong>.<br>
+                2. Setel <strong>Who has access</strong> ke <strong>Anyone</strong>.<br>
+                3. Pastikan sudah klik 'Authorize Access' di Google Script.`;
             }
         }
 
         function renderSidebar() {
             const menuContainer = document.getElementById('sidebarMenu');
             menuContainer.innerHTML = '';
-            
             dynamicTabs.forEach(tab => {
                 const li = document.createElement('li');
                 li.className = `menu-item ${currentTab && currentTab.gid === tab.gid ? 'active' : ''}`;
                 li.onclick = () => switchMenu(tab, li);
-                li.innerHTML = `
-                    <span style="font-size: 20px;">📁</span>
-                    <span>${tab.name}</span>
-                `;
+                li.innerHTML = `<span>📁</span><span>${tab.name}</span>`;
                 menuContainer.appendChild(li);
             });
         }
@@ -378,74 +341,45 @@
         function switchMenu(tab, el) {
             currentTab = tab;
             document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
             
-            // Jika dipanggil dari klik manual
-            if (el) {
-                el.classList.add('active');
-            } else {
-                // Cari elemen yang sesuai jika dipanggil otomatis
-                renderSidebar(); 
-            }
-            
-            document.getElementById('pageTitle').innerText = `Folder ${tab.name}`;
-            document.getElementById('pageSubtitle').innerText = `Menampilkan data dari sheet ${tab.name}`;
+            document.getElementById('pageTitle').innerText = tab.name;
+            document.getElementById('pageSubtitle').innerText = `Folder dalam kategori ${tab.name}`;
             fetchData();
         }
 
         async function fetchData() {
             if (!currentTab) return;
             const content = document.getElementById('content');
-            content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Mengambil data...</p></div>`;
+            content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Memuat data...</div>`;
             
             try {
-                // Sangat Penting: Pastikan URL CSV menyertakan GID yang benar
-                const url = `${APP_CONFIG.csvBaseUrl}&gid=${currentTab.gid}&t=${Date.now()}`;
-                const res = await fetch(url);
-                
-                if (!res.ok) throw new Error("Gagal mengambil CSV");
-                
+                const res = await fetch(`${APP_CONFIG.csvBaseUrl}&gid=${currentTab.gid}&t=${Date.now()}`);
                 const text = await res.text();
                 const data = parseCSV(text);
                 displayCards(data);
-                document.getElementById('updateText').innerText = "Update: " + new Date().toLocaleTimeString('id-ID');
+                document.getElementById('updateText').innerText = "Update: " + new Date().toLocaleTimeString();
             } catch (e) {
-                content.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);">
-                        <p>Data tidak ditemukan atau Gagal memuat.</p>
-                        <p style="font-size:12px; margin-top:10px; color:var(--text-sub)">
-                            Tips: Pastikan Spreadsheet sudah di "Publish to Web" untuk tab <b>${currentTab.name}</b>.
-                        </p>
-                    </div>`;
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color:red;">Gagal memuat data dari Sheets.</div>`;
             }
         }
 
         function parseCSV(text) {
             const lines = text.trim().split(/\r?\n/);
             if (lines.length < 2) return [];
-            
-            // Regex untuk handle koma di dalam tanda kutip
-            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-            
             return lines.slice(1).map(line => {
-                const parts = line.split(regex).map(v => v.trim().replace(/^"|"$/g, ''));
-                return { 
-                    cat: parts[0] || 'Umum', 
-                    type: parts[1] || 'File', 
-                    name: parts[2] || 'Tanpa Nama', 
-                    url: parts[3] 
-                };
-            }).filter(i => i.url && i.url.startsWith('http'));
+                const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+                return { cat: parts[0], type: parts[1], name: parts[2], url: parts[3] };
+            }).filter(i => i.url);
         }
 
         function displayCards(items) {
             const content = document.getElementById('content');
             content.innerHTML = "";
-            
             if(!items.length) {
-                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Sheet ini masih kosong atau tidak ada link valid.</p></div>`;
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Belum ada data di kategori ini.</div>`;
                 return;
             }
-
             items.forEach((item, index) => {
                 const isFolder = (item.type || "").toLowerCase() === 'folder';
                 const card = document.createElement('a');
@@ -455,11 +389,8 @@
                 card.innerHTML = `
                     <div class="icon-container">${isFolder ? '📂' : '📄'}</div>
                     <div class="card-content">
-                        <div class="card-name" title="${item.name}">${item.name}</div>
-                        <div class="card-meta">
-                            <span class="tag-type">${isFolder ? 'Folder' : 'Dokumen'}</span>
-                            <span style="color:var(--text-sub); margin-left: auto; font-size:10px;">${item.cat}</span>
-                        </div>
+                        <div class="card-name">${item.name}</div>
+                        <div class="tag-type">${isFolder ? 'Folder' : 'File'}</div>
                     </div>
                 `;
                 content.appendChild(card);
@@ -479,29 +410,23 @@
             btn.innerText = "Memproses...";
             
             try {
-                // Gunakan POST ke Google Apps Script
                 const response = await fetch(APP_CONFIG.backendUrl, {
                     method: 'POST',
                     body: JSON.stringify({ category: currentTab.name, folderLinks: input })
                 });
                 const result = await response.json();
-                
                 if(result.success) {
-                    alert(`Berhasil! ${result.data.itemCount} item masuk ke tab ${result.data.sheetUpdated}`);
+                    alert("Berhasil diperbarui!");
                     closeModal();
-                    // Tunggu sebentar sebelum refresh agar cache Google Sheets terupdate
-                    setTimeout(fetchData, 1500);
+                    fetchData();
                 } else { throw new Error(result.error); }
-            } catch (e) { 
-                alert("Gagal Update: " + e.message); 
-            } finally {
+            } catch (e) { alert("Error: " + e.message); } 
+            finally {
                 btn.disabled = false;
                 btn.innerText = "Proses Sekarang";
             }
         }
 
-        window.onclick = (e) => { if (e.target.id == 'updateModal') closeModal(); }
-        // Jalankan inisialisasi saat halaman dimuat
         window.onload = initApp;
     </script>
 </body>
