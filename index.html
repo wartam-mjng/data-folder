@@ -11,6 +11,10 @@
             --primary-dark: #4f46e5;
             --primary-light: #eef2ff;
             --accent: #f43f5e;
+            --folder-color: #f59e0b;
+            --folder-bg: #fffbeb;
+            --file-color: #3b82f6;
+            --file-bg: #eff6ff;
             --bg: #f8fafc;
             --sidebar-bg: #ffffff;
             --text-main: #0f172a;
@@ -58,7 +62,7 @@
             gap: 12px;
         }
 
-        .menu-list { list-style: none; flex: 1; }
+        .menu-list { list-style: none; flex: 1; overflow-y: auto; }
         .menu-item { 
             padding: 14px 16px; 
             margin-bottom: 8px; 
@@ -84,7 +88,6 @@
             box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
         }
 
-        /* Sidebar Footer / Sheet Link */
         .sidebar-footer {
             padding-top: 20px;
             border-top: 1px solid var(--border);
@@ -153,45 +156,73 @@
         .btn-primary { background: var(--primary); color: white; border: none; }
         .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4); }
 
-        /* Grid & Cards */
-        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        /* Grid */
+        .link-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 20px; 
+        }
 
         .link-card { 
             background: var(--card-bg); 
             border: 1px solid var(--border); 
-            padding: 28px; 
+            padding: 20px; 
             border-radius: var(--radius-lg); 
             text-decoration: none; 
             color: inherit; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: all 0.3s ease; 
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: relative;
-            overflow: hidden;
+            align-items: center;
+            gap: 18px;
             box-shadow: var(--shadow);
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(15px);
         }
 
-        .link-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--primary); opacity: 0; transition: 0.3s;
+        .link-card:hover { 
+            transform: translateY(-4px) scale(1.02); 
+            border-color: var(--primary-light); 
+            box-shadow: var(--shadow-hover); 
         }
 
-        .link-card:hover { transform: translateY(-8px); border-color: var(--primary-light); box-shadow: var(--shadow-hover); }
-        .link-card:hover::before { opacity: 1; }
-
-        .icon-circle { 
-            width: 56px; height: 56px; background: var(--primary-light); border-radius: 14px; 
-            display: flex; align-items: center; justify-content: center; margin-bottom: 20px; 
-            font-size: 26px; color: var(--primary); transition: 0.3s;
+        .icon-container { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            flex-shrink: 0;
+            transition: 0.3s;
         }
 
-        .link-card:hover .icon-circle { background: var(--primary); color: white; transform: scale(1.1) rotate(5deg); }
+        .card-folder .icon-container { background: var(--folder-bg); color: var(--folder-color); }
+        .card-file .icon-container { background: var(--file-bg); color: var(--file-color); }
 
-        .card-name { font-weight: 700; font-size: 18px; margin-bottom: 6px; color: var(--text-main); }
-        .card-cat { font-size: 12px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .card-content { flex: 1; min-width: 0; }
+        .card-name { 
+            font-weight: 700; 
+            font-size: 15px; 
+            color: var(--text-main); 
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-meta { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+        }
+
+        .tag-type { padding: 2px 8px; border-radius: 4px; }
+        .card-folder .tag-type { background: var(--folder-bg); color: var(--folder-color); }
+        .card-file .tag-type { background: var(--file-bg); color: var(--file-color); }
 
         .status-badge { 
             font-size: 12px; color: var(--primary); background: var(--primary-light); 
@@ -210,7 +241,6 @@
 
         .modal-content { 
             background: white; padding: 40px; border-radius: 24px; width: 100%; max-width: 500px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
         textarea { 
@@ -242,11 +272,12 @@
             <span>DriveHub</span>
         </div>
         
-        <ul id="sidebarMenu" class="menu-list"></ul>
+        <ul id="sidebarMenu" class="menu-list">
+            <li class="menu-item" style="opacity: 0.5;">Memuat menu...</li>
+        </ul>
 
         <div class="sidebar-footer">
-            <!-- Link menuju file Google Sheet utama Anda -->
-            <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1bCwRTDej3tLpJU_wKw58aX-BDa7hZGBANlyujwmGqfU/edit?usp=sharing" target="_blank" class="btn-sheet">
+            <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/edit?usp=sharing" target="_blank" class="btn-sheet">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 <span>Buka Spreadsheet</span>
             </a>
@@ -256,15 +287,15 @@
     <main>
         <header>
             <div>
-                <h1 id="pageTitle">Memuat...</h1>
-                <p id="pageSubtitle" class="subtitle">Kelola dan akses dokumen Drive Anda</p>
+                <h1 id="pageTitle">DriveHub</h1>
+                <p id="pageSubtitle" class="subtitle">Pilih kategori di sidebar untuk melihat data.</p>
                 <div id="lastUpdate" class="status-badge">
                     <span class="pulse"></span>
-                    <span id="updateText">Menghubungkan...</span>
+                    <span id="updateText">Siap</span>
                 </div>
             </div>
             <div class="actions">
-                <button class="btn" onclick="fetchData()"><span>🔄</span> Segarkan</button>
+                <button class="btn" onclick="initApp()"><span>🔄</span> Sinkron Tab</button>
                 <button class="btn btn-primary" onclick="openModal()"><span>⚡</span> Update Drive</button>
             </div>
         </header>
@@ -272,12 +303,11 @@
         <div id="content" class="link-grid"></div>
     </main>
 
-    <!-- Modal Input Links -->
     <div id="updateModal" class="modal">
         <div class="modal-content">
             <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Update Drive</h2>
             <p style="font-size: 14px; color: var(--text-sub); line-height: 1.5;">Masukkan link folder Google Drive untuk sinkronisasi ke tab aktif.</p>
-            <textarea id="folderLinksInput" placeholder="Tempel link folder di sini (satu per baris)..."></textarea>
+            <textarea id="folderLinksInput" placeholder="Tempel link folder di sini..."></textarea>
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
                 <button class="btn" style="border:none; background:#f1f5f9;" onclick="closeModal()">Batal</button>
                 <button class="btn btn-primary" id="btnProses" onclick="prosesUpdateDrive()">Proses Sekarang</button>
@@ -287,100 +317,153 @@
 
     <script>
         /**
-         * PENGATURAN TATA LETAK DATA (Kembali ke konfigurasi awal yang bekerja)
+         * KONFIGURASI OTOMATIS
          */
         const APP_CONFIG = {
-            tabs: [
-                { key: 'sekolah', label: 'Sekolah', icon: '🏫', gid: '315008582' }, 
-                { key: 'wartam', label: 'Wartam', icon: '📰', gid: '854912260' },
-                { key: 'inventaris', label: 'Inventaris', icon: '📦', gid: 'NOMOR_GID_TAB_INVENTARIS' } 
-            ],
+            // URL Web App hasil Deploy Google Apps Script
             backendUrl: "https://script.google.com/macros/s/AKfycbwOV6-mt8Mq5f77uHK2E7cKWizPdPDwo-re7RpkWOae07VGY_mkqSObgVqou_gs50ya/exec",
+            // URL CSV dari Publish to Web (Tanpa parameter gid di belakang)
             csvBaseUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo7xIrQubtkKGErAE0ex0EhahMRQhMy8YDCv5yQBpjIGyt5-PorJJsZgdTIbaLEQ1QqiGKb8flsZ76/pub?output=csv"
         };
 
-        let currentTabKey = APP_CONFIG.tabs[0].key;
+        let dynamicTabs = [];
+        let currentTab = null;
 
-        // Render Sidebar Menu
+        // 1. Ambil daftar Tab secara otomatis dari Backend
+        async function initApp() {
+            try {
+                document.getElementById('updateText').innerText = "Sinkronisasi Tab...";
+                // Gunakan mode no-cors jika perlu, tapi JSON biasanya butuh cors. 
+                // Pastikan GAS dideploy sebagai "Anyone"
+                const res = await fetch(`${APP_CONFIG.backendUrl}?action=getTabs`);
+                const result = await res.json();
+                
+                if (result.success && result.tabs) {
+                    dynamicTabs = result.tabs;
+                    renderSidebar();
+                    // Auto select tab pertama jika belum ada yang terpilih
+                    if (dynamicTabs.length > 0 && !currentTab) {
+                        switchMenu(dynamicTabs[0]);
+                    } else if (currentTab) {
+                        // Tetap di tab yang sama jika sedang refresh
+                        const updatedTab = dynamicTabs.find(t => t.name === currentTab.name);
+                        if (updatedTab) switchMenu(updatedTab);
+                    }
+                }
+            } catch (e) {
+                console.error("Gagal sinkron tab:", e);
+                document.getElementById('sidebarMenu').innerHTML = `
+                    <li class="menu-item" style="color:red; font-size:12px;">
+                        Gagal Sinkron. Pastikan GAS sudah di-deploy ulang sebagai 'Anyone'.
+                    </li>`;
+            }
+        }
+
         function renderSidebar() {
             const menuContainer = document.getElementById('sidebarMenu');
             menuContainer.innerHTML = '';
             
-            APP_CONFIG.tabs.forEach(tab => {
+            dynamicTabs.forEach(tab => {
                 const li = document.createElement('li');
-                li.className = `menu-item ${tab.key === currentTabKey ? 'active' : ''}`;
-                li.onclick = () => switchMenu(tab.key, li);
+                li.className = `menu-item ${currentTab && currentTab.gid === tab.gid ? 'active' : ''}`;
+                li.onclick = () => switchMenu(tab, li);
                 li.innerHTML = `
-                    <span style="font-size: 20px;">${tab.icon}</span>
-                    <span>${tab.label}</span>
+                    <span style="font-size: 20px;">📁</span>
+                    <span>${tab.name}</span>
                 `;
                 menuContainer.appendChild(li);
             });
         }
 
-        function switchMenu(key, el) {
-            if(currentTabKey === key) return;
-            currentTabKey = key;
+        function switchMenu(tab, el) {
+            currentTab = tab;
             document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-            renderHeader();
+            
+            // Jika dipanggil dari klik manual
+            if (el) {
+                el.classList.add('active');
+            } else {
+                // Cari elemen yang sesuai jika dipanggil otomatis
+                renderSidebar(); 
+            }
+            
+            document.getElementById('pageTitle').innerText = `Folder ${tab.name}`;
+            document.getElementById('pageSubtitle').innerText = `Menampilkan data dari sheet ${tab.name}`;
             fetchData();
         }
 
-        function renderHeader() {
-            const currentTab = APP_CONFIG.tabs.find(t => t.key === currentTabKey);
-            document.getElementById('pageTitle').innerText = `Folder ${currentTab.label}`;
-            document.getElementById('pageSubtitle').innerText = `Menampilkan koleksi data di tab ${currentTab.label}`;
-        }
-
         async function fetchData() {
+            if (!currentTab) return;
             const content = document.getElementById('content');
             content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Mengambil data...</p></div>`;
             
-            const currentTab = APP_CONFIG.tabs.find(t => t.key === currentTabKey);
-            
             try {
-                // Menggunakan link CSV Publik yang sudah terbukti bekerja
+                // Sangat Penting: Pastikan URL CSV menyertakan GID yang benar
                 const url = `${APP_CONFIG.csvBaseUrl}&gid=${currentTab.gid}&t=${Date.now()}`;
                 const res = await fetch(url);
+                
+                if (!res.ok) throw new Error("Gagal mengambil CSV");
+                
                 const text = await res.text();
                 const data = parseCSV(text);
                 displayCards(data);
-                document.getElementById('updateText').innerText = "Terakhir: " + new Date().toLocaleTimeString('id-ID');
+                document.getElementById('updateText').innerText = "Update: " + new Date().toLocaleTimeString('id-ID');
             } catch (e) {
-                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);"><p>Gagal memuat. Pastikan GID dan Publikasi Web di Spreadsheet benar.</p></div>`;
+                content.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--accent);">
+                        <p>Data tidak ditemukan atau Gagal memuat.</p>
+                        <p style="font-size:12px; margin-top:10px; color:var(--text-sub)">
+                            Tips: Pastikan Spreadsheet sudah di "Publish to Web" untuk tab <b>${currentTab.name}</b>.
+                        </p>
+                    </div>`;
             }
         }
 
         function parseCSV(text) {
             const lines = text.trim().split(/\r?\n/);
             if (lines.length < 2) return [];
+            
+            // Regex untuk handle koma di dalam tanda kutip
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+            
             return lines.slice(1).map(line => {
-                const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
-                return { cat: parts[0], type: parts[1], name: parts[2], url: parts[3] };
-            }).filter(i => i.url);
+                const parts = line.split(regex).map(v => v.trim().replace(/^"|"$/g, ''));
+                return { 
+                    cat: parts[0] || 'Umum', 
+                    type: parts[1] || 'File', 
+                    name: parts[2] || 'Tanpa Nama', 
+                    url: parts[3] 
+                };
+            }).filter(i => i.url && i.url.startsWith('http'));
         }
 
         function displayCards(items) {
             const content = document.getElementById('content');
             content.innerHTML = "";
+            
             if(!items.length) {
-                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Tab ini masih kosong.</p></div>`;
+                content.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-sub);"><p>Sheet ini masih kosong atau tidak ada link valid.</p></div>`;
                 return;
             }
+
             items.forEach((item, index) => {
+                const isFolder = (item.type || "").toLowerCase() === 'folder';
                 const card = document.createElement('a');
-                card.className = 'link-card';
+                card.className = `link-card ${isFolder ? 'card-folder' : 'card-file'}`;
                 card.href = item.url;
                 card.target = "_blank";
-                const isFolder = (item.type || "").toLowerCase() === 'folder';
-                card.innerHTML = `<div class="icon-circle">${isFolder ? '📂' : '📄'}</div><div class="card-info"><div class="card-name">${item.name}</div><div class="card-cat">${item.cat || 'Drive'}</div></div>`;
+                card.innerHTML = `
+                    <div class="icon-container">${isFolder ? '📂' : '📄'}</div>
+                    <div class="card-content">
+                        <div class="card-name" title="${item.name}">${item.name}</div>
+                        <div class="card-meta">
+                            <span class="tag-type">${isFolder ? 'Folder' : 'Dokumen'}</span>
+                            <span style="color:var(--text-sub); margin-left: auto; font-size:10px;">${item.cat}</span>
+                        </div>
+                    </div>
+                `;
                 content.appendChild(card);
-                
-                setTimeout(() => {
-                    card.style.opacity = "1";
-                    card.style.transform = "translateY(0)";
-                }, index * 50);
+                setTimeout(() => { card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, index * 30);
             });
         }
 
@@ -390,30 +473,36 @@
         async function prosesUpdateDrive() {
             const input = document.getElementById('folderLinksInput').value;
             const btn = document.getElementById('btnProses');
-            if(!input) return alert("Masukkan link folder!");
+            if(!input || !currentTab) return alert("Pilih kategori dan masukkan link!");
             
             btn.disabled = true;
             btn.innerText = "Memproses...";
             
             try {
+                // Gunakan POST ke Google Apps Script
                 const response = await fetch(APP_CONFIG.backendUrl, {
                     method: 'POST',
-                    body: JSON.stringify({ category: currentTabKey, folderLinks: input })
+                    body: JSON.stringify({ category: currentTab.name, folderLinks: input })
                 });
                 const result = await response.json();
+                
                 if(result.success) {
-                    alert(`Berhasil diupdate ke tab ${result.data.sheetUpdated}`);
+                    alert(`Berhasil! ${result.data.itemCount} item masuk ke tab ${result.data.sheetUpdated}`);
                     closeModal();
-                    fetchData();
+                    // Tunggu sebentar sebelum refresh agar cache Google Sheets terupdate
+                    setTimeout(fetchData, 1500);
                 } else { throw new Error(result.error); }
-            } catch (e) { alert("Error: " + e.message); } finally {
+            } catch (e) { 
+                alert("Gagal Update: " + e.message); 
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Proses Sekarang";
             }
         }
 
         window.onclick = (e) => { if (e.target.id == 'updateModal') closeModal(); }
-        window.onload = () => { renderSidebar(); renderHeader(); fetchData(); };
+        // Jalankan inisialisasi saat halaman dimuat
+        window.onload = initApp;
     </script>
 </body>
 </html>
